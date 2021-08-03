@@ -2,6 +2,7 @@ import Loader from 'components/Loader';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Helmet from 'react-helmet';
+import YouTube from 'react-youtube';
 
 const Container = styled.div`
   height: calc(100vh - 50px);
@@ -94,11 +95,36 @@ const ProductionLogo = styled.img`
 const ProductionCountries = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const Country = styled.p`
   margin-top: 5px;
   font-size: 14px;
+`;
+
+const VideoContainer = styled.div``;
+
+const YouTubeC = styled(YouTube)`
+  height: 320px;
+  margin-top: 30px;
+`;
+
+const SeasonContainer = styled.div`
+  width: 700px;
+  height: 100%;
+  display: flex;
+  margin-top: 20px;
+`;
+
+const Season = styled.div`
+  margin-right: 15px;
+  height: 100%;
+`;
+
+const Image = styled.img`
+  max-height: 120px;
+  height: 100%;
 `;
 
 const DetailPresenter = ({ result, error, loading }) =>
@@ -110,74 +136,101 @@ const DetailPresenter = ({ result, error, loading }) =>
       <Loader />
     </>
   ) : (
-    <Container>
-      <Helmet>
-        <title>{result.title || result.name} | Cheese Popcorn</title>
-      </Helmet>
-      <Backdrop
-        bgImage={`https://image.tmdb.org/t/p/original${result.backdrop_path}`}
-      />
-      <Content>
-        <Cover
-          bgImage={
-            result.poster_path
-              ? `https://image.tmdb.org/t/p/original${result.poster_path}`
-              : require('../../assets/noPosterSmall.png')
-          }
+    <>
+      <Container>
+        <Helmet>
+          <title>{result.title || result.name} | Cheese Popcorn</title>
+        </Helmet>
+        <Backdrop
+          bgImage={`https://image.tmdb.org/t/p/original${result.backdrop_path}`}
         />
-        <Data>
-          <Title>{result.title || result.name}</Title>
-          <ItemContainer>
-            <Item>
-              {result.release_date?.substring(0, 4) ||
-                result.first_air_date?.substring(0, 4)}
-            </Item>
-            <Divider>▪</Divider>
-            <Item>{result.runtime || result.episode_run_time?.[0]}m</Item>
-            <Divider>▪</Divider>
-            <Item>
-              {result.genres?.map((genre, index) =>
-                index === result.genres.length - 1
-                  ? genre.name
-                  : `${genre.name} / `
-              )}
-            </Item>
+        <Content>
+          <Cover
+            bgImage={
+              result.poster_path
+                ? `https://image.tmdb.org/t/p/original${result.poster_path}`
+                : require('../../assets/noPosterSmall.png')
+            }
+          />
+          <Data>
+            <Title>{result.title || result.name}</Title>
+            <ItemContainer>
+              <Item>
+                {result.release_date?.substring(0, 4) ||
+                  result.first_air_date?.substring(0, 4)}
+              </Item>
+              <Divider>▪</Divider>
+              <Item>{result.runtime || result.episode_run_time?.[0]}m</Item>
+              <Divider>▪</Divider>
+              <Item>
+                {result.genres?.map((genre, index) =>
+                  index === result.genres.length - 1
+                    ? genre.name
+                    : `${genre.name} / `
+                )}
+              </Item>
 
-            {result.imdb_id ? (
-              <>
-                <Divider>▪</Divider>
-                <Item>
-                  <IMDB>
-                    <a
-                      target='_blank'
-                      href={`https://www.imdb.com/title/${result.imdb_id}`}
-                    >
-                      IMDB
-                    </a>
-                  </IMDB>
-                </Item>
-              </>
-            ) : null}
-          </ItemContainer>
-          <Overview>{result.overview}</Overview>
-          <ProductionContainer>
-            {result.production_companies?.map((company) =>
-              company.logo_path ? (
-                <ProductionLogo
-                  src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
-                />
-              ) : null
-            )}
-          </ProductionContainer>
-          <ProductionCountries>
-            <p style={{ fontSize: '16px', marginBottm: '10px' }}>- Countries</p>
-            {result.production_countries?.map((country) => (
-              <Country>{country.name}</Country>
-            ))}
-          </ProductionCountries>
-        </Data>
-      </Content>
-    </Container>
+              {result.imdb_id ? (
+                <>
+                  <Divider>▪</Divider>
+                  <Item>
+                    <IMDB>
+                      <a
+                        target='_blank'
+                        href={`https://www.imdb.com/title/${result.imdb_id}`}
+                      >
+                        IMDB
+                      </a>
+                    </IMDB>
+                  </Item>
+                </>
+              ) : null}
+            </ItemContainer>
+            <Overview>{result.overview}</Overview>
+
+            <ProductionContainer>
+              {result.production_companies?.map((company) =>
+                company.logo_path ? (
+                  <ProductionLogo
+                    src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
+                  />
+                ) : null
+              )}
+            </ProductionContainer>
+            <ProductionCountries>
+              <p style={{ fontSize: '16px', marginBottm: '10px' }}>
+                - Countries
+              </p>
+              {result.production_countries?.map((country) => (
+                <Country>{country.name}</Country>
+              ))}
+              <VideoContainer>
+                {result.videos?.results[0] ? (
+                  <YouTubeC
+                    opts={{ autoplay: 1 }}
+                    videoId={result.videos.results[0].key}
+                  />
+                ) : null}
+              </VideoContainer>
+              <SeasonContainer>
+                {result.seasons?.map((season) => (
+                  <Season>
+                    <Image
+                      src={
+                        season.poster_path
+                          ? `https://image.tmdb.org/t/p/w300${season.poster_path}`
+                          : 'https://github.com/nomadcoders/nomflix/blob/489431a382deae97bf3c5efac025981cc246aa8f/src/assets/noPosterSmall.png?raw=true'
+                      }
+                    />
+                    <h3 style={{ fontSize: '16px' }}>{season.name}</h3>
+                  </Season>
+                ))}
+              </SeasonContainer>
+            </ProductionCountries>
+          </Data>
+        </Content>
+      </Container>
+    </>
   );
 
 DetailPresenter.propTypes = {
