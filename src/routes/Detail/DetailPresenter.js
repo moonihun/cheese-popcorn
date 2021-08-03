@@ -2,7 +2,6 @@ import Loader from 'components/Loader';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Helmet from 'react-helmet';
-import { nullableTypeAnnotation } from '@babel/types';
 
 const Container = styled.div`
   height: calc(100vh - 50px);
@@ -77,7 +76,14 @@ const IMDB = styled.button`
 
 const ProductionContainer = styled.div`
   display: flex;
-  width: 100%;
+  flex-direction: row;
+  width: 50%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px 0;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
 `;
 
 const ProductionLogo = styled.img`
@@ -85,7 +91,15 @@ const ProductionLogo = styled.img`
   height: 100%;
 `;
 
-const ProductionCountries = styled.p``;
+const ProductionCountries = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Country = styled.p`
+  margin-top: 5px;
+  font-size: 14px;
+`;
 
 const DetailPresenter = ({ result, error, loading }) =>
   loading ? (
@@ -119,7 +133,7 @@ const DetailPresenter = ({ result, error, loading }) =>
                 result.first_air_date?.substring(0, 4)}
             </Item>
             <Divider>▪</Divider>
-            <Item>{result.runtime || result.episode_run_time?.[0]}</Item>
+            <Item>{result.runtime || result.episode_run_time?.[0]}m</Item>
             <Divider>▪</Divider>
             <Item>
               {result.genres?.map((genre, index) =>
@@ -154,10 +168,13 @@ const DetailPresenter = ({ result, error, loading }) =>
                 />
               ) : null
             )}
-            <ProductionCountries>
-              {result.production_countries?.map((country) => country.name)}
-            </ProductionCountries>
           </ProductionContainer>
+          <ProductionCountries>
+            <p style={{ fontSize: '16px', marginBottm: '10px' }}>- Countries</p>
+            {result.production_countries?.map((country) => (
+              <Country>{country.name}</Country>
+            ))}
+          </ProductionCountries>
         </Data>
       </Content>
     </Container>
