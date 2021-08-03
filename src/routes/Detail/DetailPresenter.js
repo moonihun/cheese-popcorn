@@ -177,6 +177,7 @@ const DetailPresenter = ({ result, error, loading }) =>
                     <IMDB>
                       <a
                         target='_blank'
+                        rel='noreferrer'
                         href={`https://www.imdb.com/title/${result.imdb_id}`}
                       >
                         IMDB
